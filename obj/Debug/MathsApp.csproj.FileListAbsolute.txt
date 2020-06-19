@@ -1,0 +1,9 @@
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/obj/Debug/MathsApp.csprojAssemblyReference.cache
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/obj/Debug/MathsApp.csproj.CoreCompileInputs.cache
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/bin/Debug/MathsApp.exe
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/bin/Debug/MathsApp.pdb
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/bin/Debug/Newtonsoft.Json.dll
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/bin/Debug/Newtonsoft.Json.xml
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/obj/Debug/MathsApp.csproj.CopyComplete
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/obj/Debug/MathsApp.exe
+/Users/danyalqureshi/Documents/MathsApp/MathsApp/obj/Debug/MathsApp.pdb
