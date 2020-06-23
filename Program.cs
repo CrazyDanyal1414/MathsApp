@@ -52,7 +52,7 @@ namespace MathsApp
 			return score;
 		}
 
-		static (UserDifficulty, int, string, int) UserInputs()
+		static (UserDifficulty, int, string, int, string) UserInputs()
 		{
 			Dictionary<string, UserDifficulty> difficultyDictionary = new Dictionary<string, UserDifficulty>
             {
@@ -63,8 +63,15 @@ namespace MathsApp
 
             string userInputDifficulty = "E";
 			int numberOfQuestions;
-			string autoDifficultyInput;
+			string autoDifficultyInput = "";
 			int numberOfSeconds;
+			string testOrTwoPlayer;
+
+			do
+			{
+				Console.WriteLine("Please type '2' for 2 player and 'T' for test");
+				testOrTwoPlayer = Console.ReadLine().ToUpper();
+			} while (testOrTwoPlayer != "2" && testOrTwoPlayer != "T");
 
 			do
 			{
@@ -72,17 +79,15 @@ namespace MathsApp
 				autoDifficultyInput = Console.ReadLine().Substring(0).ToUpper();
 			} while (autoDifficultyInput != "Y" && autoDifficultyInput != "N");
 
-            if (autoDifficultyInput == "N")
-            {
+			if (autoDifficultyInput == "N")
+			{
 				do
 				{
 					Console.WriteLine("Which difficulty level would you like to do! Please type E for Easy, N for Normal and H for Hard");
 					userInputDifficulty = Console.ReadLine().ToUpper();
 				} while (userInputDifficulty != "E" && userInputDifficulty != "N" && userInputDifficulty != "H");
 			}
-
 			UserDifficulty userDifficulty = difficultyDictionary[userInputDifficulty];
-
 			do
 			{
 				Console.WriteLine("How many questions would you like to answer? Please type a number divisible by 10!");
@@ -95,7 +100,7 @@ namespace MathsApp
 				int.TryParse(Console.ReadLine(), out numberOfSeconds);
 			} while (numberOfSeconds % 30 != 0);
 
-			return (userDifficulty, numberOfQuestions, autoDifficultyInput, numberOfSeconds);
+			return (userDifficulty, numberOfQuestions, autoDifficultyInput, numberOfSeconds, testOrTwoPlayer);
 		}
 
 		public static void Main(string[] args)
@@ -172,6 +177,8 @@ namespace MathsApp
 			double easyTests = 0;
 			double normalTests = 0;
 			double hardTests = 0;
+			int twoPlayerChallenge = 0;
+			OperationQuestionScore score = new OperationQuestionScore();
 			if (File.Exists($"{userName}.gitignore"))
 			{
 				ToFile objnew = SaveToFile.DeserializeLastTest(userName);
@@ -184,55 +191,85 @@ namespace MathsApp
 				easyTests = objnew.EasyTests;
 				normalTests = objnew.NormalTests;
 				hardTests = objnew.HardTests;
+				twoPlayerChallenge = objnew.TwoPlayerChallenge;
 			}
 			UserDifficulty userSuggestingDifficulty = UserDifficulty.Easy;
 			if (File.Exists($"{userName}.gitignore"))
 			{
 				userSuggestingDifficulty = CanUseManyTimes.SuggestingDifficulty(userName);
 			}
-            var (userDifficulty, numberOfQuestions, autoDifficultyInput, numberOfSeconds) = UserInputs();
+            var (userDifficulty, numberOfQuestions, autoDifficultyInput, numberOfSeconds, testOrTwoPlayer) = UserInputs();
 
-            if (LogInOrSignUp == 1)
+            if (testOrTwoPlayer == "T")
             {
-				if (autoDifficultyInput == "Y")
+				if (LogInOrSignUp == 1)
 				{
-					userDifficulty = userSuggestingDifficulty;
+					if (autoDifficultyInput == "Y")
+					{
+						userDifficulty = userSuggestingDifficulty;
+					}
+				}
+
+				score = RunTest(numberOfQuestions, userDifficulty, numberOfSeconds);
+
+				Console.WriteLine($"Total score: {score.TotalScore} of {numberOfQuestions}");
+
+				if (userDifficulty == UserDifficulty.Easy)
+				{
+					Console.WriteLine($"Addition score: {score.AdditionScore} of {score.AdditionQuestion}");
+					Console.WriteLine($"Subtraction score: {score.SubtractionScore} of {score.SubtractionQuestion}");
+					Console.WriteLine($"Multiplication score: {score.MultiplicationScore} of {score.MultiplicationQuestion}");
+					easyTests++;
+					totalEasyQuestion = totalEasyQuestion + numberOfQuestions;
+					totalEasyScore = Math.Round((totalEasyScore + ((double)score.TotalScore / (double)numberOfQuestions) * 100) / easyTests, 2);
+				}
+				else if (userDifficulty == UserDifficulty.Normal)
+				{
+					Console.WriteLine($"Addition score: {score.AdditionScore} of {score.AdditionQuestion}");
+					Console.WriteLine($"Subtraction score: {score.SubtractionScore} of {score.SubtractionQuestion}");
+					Console.WriteLine($"Multiplication score: {score.MultiplicationScore} of {score.MultiplicationQuestion}");
+					Console.WriteLine($"Division score: {score.DivisionScore} of {score.DivisionQuestion}");
+					normalTests++;
+					totalNormalQuestion = totalNormalQuestion + numberOfQuestions;
+					totalNormalScore = Math.Round((totalNormalScore + ((double)score.TotalScore / (double)numberOfQuestions) * 100) / normalTests, 2);
+				}
+				else if (userDifficulty == UserDifficulty.Hard)
+				{
+					Console.WriteLine($"Multipication score: {score.MultiplicationScore} of {score.MultiplicationQuestion}");
+					Console.WriteLine($"Division score: {score.DivisionScore} of {score.DivisionQuestion}");
+					Console.WriteLine($"Power score: {score.PowerScore} of {score.PowerQuestion}");
+					Console.WriteLine($"Squareroot score: {score.SquareRootScore} of {score.SquareRootQuestion}");
+					hardTests++;
+					totalHardQuestion = totalHardQuestion + numberOfQuestions;
+					totalHardScore = Math.Round((totalHardScore + ((double)score.TotalScore / (double)numberOfQuestions) * 100) / hardTests, 2);
 				}
 			}
-
-			var score = RunTest(numberOfQuestions, userDifficulty, numberOfSeconds);
-
-			Console.WriteLine($"Total score: {score.TotalScore} of {numberOfQuestions}");
-
-			if (userDifficulty == UserDifficulty.Easy)
-			{
-				Console.WriteLine($"Addition score: {score.AdditionScore} of {score.AdditionQuestion}");
-                Console.WriteLine($"Subtraction score: {score.SubtractionScore} of {score.SubtractionQuestion}");
-				Console.WriteLine($"Multiplication score: {score.MultiplicationScore} of {score.MultiplicationQuestion}");
-				easyTests++;
-				totalEasyQuestion = totalEasyQuestion + numberOfQuestions;
-				totalEasyScore = Math.Round((totalEasyScore + ((double)score.TotalScore/(double)numberOfQuestions)*100)/easyTests, 2);
+			else if (testOrTwoPlayer == "2")
+            {
+				Console.WriteLine($"Player 1: {userName}");
+				Console.WriteLine($"What is Player 2's name?");
+				string playerTwo = Console.ReadLine();
+				Console.WriteLine($"{userName} will go first!");
+				OperationQuestionScore playerOneScore = RunTest(numberOfQuestions, userDifficulty, numberOfSeconds);
+				Console.WriteLine($"{userName} got a score of {playerOneScore.PlayerOneScore} out of {numberOfQuestions}");
+				Console.WriteLine($"Now it is {playerTwo}'s turn");
+				OperationQuestionScore playerTwoScore = RunTest(numberOfQuestions, userDifficulty, numberOfSeconds);
+				Console.WriteLine($"{playerTwo} got a score of {playerTwoScore.PlayerTwoScore} out of {numberOfQuestions}");
+				if (playerOneScore.PlayerOneScore > playerTwoScore.PlayerTwoScore)
+                {
+					Console.WriteLine($"{userName} won the challenge!🥳");
+					twoPlayerChallenge++;
+                }
+				else if (playerOneScore.PlayerOneScore < playerTwoScore.PlayerTwoScore)
+				{
+					Console.WriteLine($"{playerTwo} won the challenge!🥳");
+				}
+                else
+                {
+					Console.WriteLine("This challenge ended in stalemate");
+                }
 			}
-			else if (userDifficulty == UserDifficulty.Normal)
-			{
-                Console.WriteLine($"Addition score: {score.AdditionScore} of {score.AdditionQuestion}");
-				Console.WriteLine($"Subtraction score: {score.SubtractionScore} of {score.SubtractionQuestion}");
-				Console.WriteLine($"Multiplication score: {score.MultiplicationScore} of {score.MultiplicationQuestion}");
-				Console.WriteLine($"Division score: {score.DivisionScore} of {score.DivisionQuestion}");
-				normalTests++;
-				totalNormalQuestion = totalNormalQuestion + numberOfQuestions;
-				totalNormalScore = Math.Round((totalNormalScore + ((double)score.TotalScore/(double)numberOfQuestions)*100)/normalTests, 2);
-			}
-            else if (userDifficulty == UserDifficulty.Hard)
-			{
-				Console.WriteLine($"Multipication score: {score.MultiplicationScore} of {score.MultiplicationQuestion}");
-				Console.WriteLine($"Division score: {score.DivisionScore} of {score.DivisionQuestion}");
-                Console.WriteLine($"Power score: {score.PowerScore} of {score.PowerQuestion}");
-				Console.WriteLine($"Squareroot score: {score.SquareRootScore} of {score.SquareRootQuestion}");
-				hardTests++;
-				totalHardQuestion = totalHardQuestion + numberOfQuestions;
-				totalHardScore = Math.Round((totalHardScore + ((double)score.TotalScore/(double)numberOfQuestions)*100)/hardTests, 2);
-			}
+
 			string statisticsDisplay;
 			do
 			{
@@ -244,8 +281,9 @@ namespace MathsApp
 				Console.WriteLine($"You have answered {totalEasyQuestion} easy questions so far with an average score of {totalEasyScore}%");
 				Console.WriteLine($"You have answered {totalNormalQuestion} normal questions so far with an average score of {totalNormalScore}%");
 				Console.WriteLine($"You have answered {totalHardQuestion} hard questions so far with an average score of {totalHardScore}%");
+				Console.WriteLine($"You have won {twoPlayerChallenge} twoPlayerChallenges");
 			}
-		    SaveToFile.SerializeLastTest(numberOfQuestions, score.TotalScore, userDifficulty, userName, totalEasyQuestion, totalEasyScore, totalNormalQuestion, totalNormalScore, totalHardQuestion, totalHardScore, easyTests, normalTests, hardTests);
+		    SaveToFile.SerializeLastTest(numberOfQuestions, score.TotalScore, userDifficulty, userName, totalEasyQuestion, totalEasyScore, totalNormalQuestion, totalNormalScore, totalHardQuestion, totalHardScore, easyTests, normalTests, hardTests, twoPlayerChallenge);
 		}
 	}
 }

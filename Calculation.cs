@@ -88,6 +88,8 @@ namespace MathsApp
 			public int SquareRootQuestion { get; private set; }
 			public int SquareRootScore { get; private set; }
 			public int TotalScore { get; private set; }
+			public int PlayerOneScore { get; private set; }
+			public int PlayerTwoScore { get; private set; }
 
 			public void Increment(MathOperation mathOperation, bool isCorrect)
 			{
@@ -121,6 +123,8 @@ namespace MathsApp
 							break;
 					}
 					TotalScore++;
+					PlayerOneScore++;
+					PlayerTwoScore++;
 				}
 				else
 				{
