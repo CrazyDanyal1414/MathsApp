@@ -105,10 +105,10 @@ namespace MathsApp
 
 		public static void Main(string[] args)
 	    {
-			Console.WriteLine("To Login Type 1, To Create a new account Type 2");
 			int LogInOrSignUp;
 			do
 			{
+				Console.WriteLine("To Login Type 1, To Create a new account Type 2");
 				int.TryParse(Console.ReadLine(), out LogInOrSignUp);
 			} while (LogInOrSignUp != 1 && LogInOrSignUp != 2);
 
@@ -268,6 +268,7 @@ namespace MathsApp
                 {
 					Console.WriteLine("This challenge ended in stalemate");
                 }
+				score.TotalScore = playerOneScore.PlayerOneScore;
 			}
 
 			string statisticsDisplay;

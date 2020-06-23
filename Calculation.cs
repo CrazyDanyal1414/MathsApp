@@ -87,7 +87,7 @@ namespace MathsApp
 			public int PowerScore { get; private set; }
 			public int SquareRootQuestion { get; private set; }
 			public int SquareRootScore { get; private set; }
-			public int TotalScore { get; private set; }
+			public int TotalScore { get; set; }
 			public int PlayerOneScore { get; private set; }
 			public int PlayerTwoScore { get; private set; }
 
